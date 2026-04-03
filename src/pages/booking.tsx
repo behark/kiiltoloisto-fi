@@ -117,7 +117,7 @@ export default function Booking() {
     try {
       // Validate required fields
       if (!selectedService || !selectedDate || !selectedTime || !vehicleType ||
-          !customerInfo.name || !customerInfo.email || !customerInfo.phone) {
+        !customerInfo.name || !customerInfo.email || !customerInfo.phone) {
         throw new Error('Kaikki pakolliset kentät täytyy täyttää');
       }
 
@@ -221,7 +221,7 @@ export default function Booking() {
                     <span className="font-medium sm:hidden">Aika</span>
                   </div>
                   <div className="hidden md:block w-16 h-0.5 bg-slate-600"></div>
-                   {/* Step 3 */}
+                  {/* Step 3 */}
                   <div className={`flex items-center space-x-1 sm:space-x-2 ${selectedService && selectedDate && selectedTime ? '' : 'opacity-50'}`}>
                     <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center font-bold text-xs sm:text-sm flex-shrink-0 ${selectedService && selectedDate && selectedTime ? 'bg-amber-500 text-slate-900' : 'bg-slate-600 text-white'}`}>3</div>
                     <span className="font-medium hidden sm:inline">Yhteystiedot</span>
@@ -244,11 +244,10 @@ export default function Booking() {
                     {services.map((service) => (
                       <div
                         key={service.id}
-                        className={`block p-4 md:p-6 rounded-2xl border-2 transition-all duration-300 text-left cursor-pointer ${
-                          selectedService === service.id
+                        className={`block p-4 md:p-6 rounded-2xl border-2 transition-all duration-300 text-left cursor-pointer ${selectedService === service.id
                             ? 'border-purple-500 bg-purple-50 shadow-lg ring-2 ring-purple-300'
                             : 'border-slate-200 hover:border-slate-300 hover:shadow-md active:border-purple-400 active:bg-purple-50'
-                        }`}
+                          }`}
                         style={{
                           touchAction: 'manipulation',
                           WebkitTapHighlightColor: 'rgba(168, 85, 247, 0.3)',
@@ -262,14 +261,9 @@ export default function Booking() {
                           position: 'relative',
                           zIndex: 1
                         }}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          console.log('Service clicked:', service.id);
+                        onClick={() => {
                           setSelectedService(service.id);
-                        }}
-                        onMouseDown={(e) => {
-                          e.preventDefault();
+                          setSelectedTime('');
                         }}
                         onKeyDown={(e) => {
                           if (e.key === 'Enter' || e.key === ' ') {
@@ -324,13 +318,12 @@ export default function Booking() {
                             <button
                               key={slot.time}
                               disabled={!slot.available}
-                              className={`p-3 text-base rounded-lg border transition-all ${
-                                selectedTime === slot.time
+                              className={`p-3 text-base rounded-lg border transition-all ${selectedTime === slot.time
                                   ? 'bg-amber-500 text-white border-amber-500'
                                   : slot.available
-                                  ? 'bg-white text-slate-700 border-slate-300 hover:border-amber-300'
-                                  : 'bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed'
-                              }`}
+                                    ? 'bg-white text-slate-700 border-slate-300 hover:border-amber-300'
+                                    : 'bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed'
+                                }`}
                               onClick={() => slot.available && setSelectedTime(slot.time)}
                             >
                               {slot.time}
@@ -375,7 +368,7 @@ export default function Booking() {
                           className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-base"
                           placeholder="ABC-123"
                           value={customerInfo.licensePlate}
-                          onChange={(e) => setCustomerInfo({...customerInfo, licensePlate: e.target.value})}
+                          onChange={(e) => setCustomerInfo({ ...customerInfo, licensePlate: e.target.value })}
                         />
                       </div>
                       <div>
@@ -386,7 +379,7 @@ export default function Booking() {
                           className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-base"
                           placeholder="Etunimi Sukunimi"
                           value={customerInfo.name}
-                          onChange={(e) => setCustomerInfo({...customerInfo, name: e.target.value})}
+                          onChange={(e) => setCustomerInfo({ ...customerInfo, name: e.target.value })}
                         />
                       </div>
                       <div>
@@ -397,7 +390,7 @@ export default function Booking() {
                           className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-base"
                           placeholder="+358 40 123 4567"
                           value={customerInfo.phone}
-                          onChange={(e) => setCustomerInfo({...customerInfo, phone: e.target.value})}
+                          onChange={(e) => setCustomerInfo({ ...customerInfo, phone: e.target.value })}
                         />
                       </div>
                       <div className="md:col-span-2">
@@ -408,7 +401,7 @@ export default function Booking() {
                           className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-base"
                           placeholder="etunimi.sukunimi@email.com"
                           value={customerInfo.email}
-                          onChange={(e) => setCustomerInfo({...customerInfo, email: e.target.value})}
+                          onChange={(e) => setCustomerInfo({ ...customerInfo, email: e.target.value })}
                         />
                       </div>
                       <div className="md:col-span-2">
@@ -418,7 +411,7 @@ export default function Booking() {
                           rows={3}
                           placeholder="Erityistoiveet tai lisätiedot autosta..."
                           value={customerInfo.notes}
-                          onChange={(e) => setCustomerInfo({...customerInfo, notes: e.target.value})}
+                          onChange={(e) => setCustomerInfo({ ...customerInfo, notes: e.target.value })}
                         ></textarea>
                       </div>
                     </div>
@@ -452,7 +445,7 @@ export default function Booking() {
                         </>
                       )}
                     </span>
-                    <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-purple-500 rounded-xl opacity-0 group-hover:opacity-30 transition-opacity duration-300 blur-sm"></div>
+                    <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-purple-500 rounded-xl opacity-0 group-hover:opacity-30 transition-opacity duration-300 blur-sm pointer-events-none"></div>
                   </button>
                   <p className="text-sm text-slate-600 mt-4">
                     ✅ Saat vahvistuksen sähköpostilla ja tekstiviestillä
@@ -465,7 +458,6 @@ export default function Booking() {
       </main>
 
       <Footer />
-      <FloatingContact />
     </>
   );
 }

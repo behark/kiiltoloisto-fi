@@ -46,9 +46,12 @@ module.exports = {
         // Luxury Gold highlights - Only include used shades
         gold: {
           100: '#fef3c7',
+          200: '#fde68a',
           300: '#fcd34d',
           400: '#fbbf24',
           500: '#f59e0b',
+          600: '#d97706',
+          700: '#b45309',
         },
         // Keep only necessary neutral grays
         neutral: {
@@ -76,11 +79,13 @@ module.exports = {
         '4xl': ['2.25rem', { lineHeight: '2.5rem' }],
         '5xl': ['3rem', { lineHeight: '1' }],
       },
-      // Only include necessary animations
       animation: {
         'fade-in': 'fadeIn 0.8s ease-in-out',
         'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
         'shimmer': 'shimmer 2s linear infinite',
+        'slow-zoom': 'slowZoom 20s ease-in-out infinite alternate',
+        'slide-down': 'slideDown 0.6s ease-out forwards',
+        'slide-up': 'slideUp 0.6s ease-out forwards',
       },
       keyframes: {
         fadeIn: {
@@ -90,6 +95,18 @@ module.exports = {
         shimmer: {
           '0%': { transform: 'translateX(-100%)' },
           '100%': { transform: 'translateX(100%)' },
+        },
+        slowZoom: {
+          '0%': { transform: 'scale(1.05)' },
+          '100%': { transform: 'scale(1.15)' },
+        },
+        slideDown: {
+          '0%': { opacity: '0', transform: 'translateY(-20px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        slideUp: {
+          '0%': { opacity: '0', transform: 'translateY(20px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
         },
       },
       // Only include necessary box shadows
@@ -119,13 +136,11 @@ module.exports = {
     hueRotate: false,
     invert: false,
     saturate: false,
-    backdropBlur: false,
     backdropBrightness: false,
     backdropContrast: false,
     backdropGrayscale: false,
     backdropHueRotate: false,
     backdropInvert: false,
-    backdropOpacity: false,
     backdropSaturate: false,
     backdropSepia: false,
   },

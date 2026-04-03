@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import Link from 'next/link';
 import { siteConfig } from '../lib/siteConfig';
 
 export default function Hero() {
@@ -15,8 +16,8 @@ export default function Hero() {
           className="object-cover scale-105 animate-slow-zoom"
         />
         {/* Refined Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-navy-900/70 via-navy-800/60 to-transparent"></div>
-        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-navy-900/70 via-navy-800/60 to-transparent pointer-events-none"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none"></div>
       </div>
 
       {/* Floating Trust Badges */}
@@ -62,8 +63,8 @@ export default function Hero() {
 
         {/* CTA Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-slide-up animation-delay-500">
-          <button
-            onClick={() => window.location.href = '/booking'}
+          <Link
+            href="/booking"
             className="group relative bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white font-bold py-5 px-10 rounded-xl text-xl transition-all duration-300 transform hover:scale-110 shadow-xl hover:shadow-glow-lg ring-2 ring-purple-400/50 hover:ring-purple-300"
           >
             <span className="relative z-10 flex items-center gap-2">
@@ -72,15 +73,15 @@ export default function Hero() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
               </svg>
             </span>
-            <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-purple-500 rounded-xl opacity-0 group-hover:opacity-30 transition-opacity duration-300 blur-sm"></div>
-          </button>
+            <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-purple-500 rounded-xl opacity-0 group-hover:opacity-30 transition-opacity duration-300 blur-sm pointer-events-none"></div>
+          </Link>
 
-          <button
-            onClick={() => window.location.href = '/services'}
+          <Link
+            href="/services"
             className="bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/20 text-white font-semibold py-4 px-8 rounded-xl text-lg transition-all duration-300 hover:border-purple-400/50"
           >
             Tutustu palveluihin
-          </button>
+          </Link>
         </div>
 
         {/* Trust Indicators */}

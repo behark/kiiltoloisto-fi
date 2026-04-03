@@ -94,19 +94,19 @@ export default function Header() {
         {/* Mobile Navigation */}
         <div className={`md:hidden overflow-hidden transition-all duration-300 ${isMobileMenuOpen ? 'max-h-[600px] opacity-100' : 'max-h-0 opacity-0'}`}>
           <nav className="py-4 space-y-2 border-t border-silver-600/30 overflow-y-auto">
-            <Link href="/services" className="block px-4 py-3 text-silver-200 hover:bg-gold-500/10 hover:text-gold-400 rounded-lg transition-colors">
+            <Link href="/services" onClick={() => setIsMobileMenuOpen(false)} className="block px-4 py-3 text-silver-200 hover:bg-gold-500/10 hover:text-gold-400 rounded-lg transition-colors">
               Palvelut
             </Link>
-            <Link href="/gallery" className="block px-4 py-3 text-silver-200 hover:bg-gold-500/10 hover:text-gold-400 rounded-lg transition-colors">
+            <Link href="/gallery" onClick={() => setIsMobileMenuOpen(false)} className="block px-4 py-3 text-silver-200 hover:bg-gold-500/10 hover:text-gold-400 rounded-lg transition-colors">
               Galleria
             </Link>
-            <Link href="/testimonials" className="block px-4 py-3 text-silver-200 hover:bg-gold-500/10 hover:text-gold-400 rounded-lg transition-colors">
+            <Link href="/testimonials" onClick={() => setIsMobileMenuOpen(false)} className="block px-4 py-3 text-silver-200 hover:bg-gold-500/10 hover:text-gold-400 rounded-lg transition-colors">
               Arvostelut
             </Link>
-            <Link href="/about" className="block px-4 py-3 text-silver-200 hover:bg-gold-500/10 hover:text-gold-400 rounded-lg transition-colors">
+            <Link href="/about" onClick={() => setIsMobileMenuOpen(false)} className="block px-4 py-3 text-silver-200 hover:bg-gold-500/10 hover:text-gold-400 rounded-lg transition-colors">
               Tietoa meistä
             </Link>
-            <Link href="/contact" className="block px-4 py-3 text-silver-200 hover:bg-gold-500/10 hover:text-gold-400 rounded-lg transition-colors">
+            <Link href="/contact" onClick={() => setIsMobileMenuOpen(false)} className="block px-4 py-3 text-silver-200 hover:bg-gold-500/10 hover:text-gold-400 rounded-lg transition-colors">
               Yhteystiedot
             </Link>
             <div className="pt-4 border-t border-silver-600/30">
@@ -118,6 +118,7 @@ export default function Header() {
               </a>
               <Link
                 href="/booking"
+                onClick={() => setIsMobileMenuOpen(false)}
                 className="block mx-4 mt-2 bg-gradient-to-r from-gold-500 to-gold-600 text-navy-900 font-semibold px-6 py-3 rounded-xl text-center transition-all duration-300"
               >
                 Varaa aika nyt

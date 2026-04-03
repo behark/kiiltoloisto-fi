@@ -24,8 +24,8 @@ export default function Footer() {
             <div className="text-gray-300 space-y-2">
               <p>{siteConfig.address.street}</p>
               {siteConfig.address.city && <p>{siteConfig.address.postalCode} {siteConfig.address.city}</p>}
-              <p>{siteConfig.phone.display}</p>
-              <p>{siteConfig.email}</p>
+              <p><a href={`tel:${siteConfig.phone.tel}`} className="hover:text-white">{siteConfig.phone.display}</a></p>
+              <p><a href={`mailto:${siteConfig.email}`} className="hover:text-white">{siteConfig.email}</a></p>
             </div>
           </div>
         </div>

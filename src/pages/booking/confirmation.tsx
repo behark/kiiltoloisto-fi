@@ -33,11 +33,41 @@ export default function BookingConfirmation() {
   const [bookingDetails, setBookingDetails] = useState<BookingDetails | null>(null);
   const [error, setError] = useState('');
 
-  // Payment verification temporarily disabled to reduce complexity
+  // Payment verification — fetch booking details by confirmation code
   const verifyPaymentAndGetBooking = useCallback(async () => {
-    setError('Maksun vahvistus ei ole vielä käytössä. Ota yhteyttä puhelimitse.');
-    setLoading(false);
-  }, [session_id]);
+    if (!confirmationCode) {
+      setError('Vahvistuskoodi puuttuu.');
+      setLoading(false);
+      return;
+    }
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000);
+      const response = await fetch(`/api/bookings/${confirmationCode}`, {
+        signal: controller.signal,
+        headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' }
+      });
+      clearTimeout(timeoutId);
+      if (!response.ok) {
+        setError('Varauksen tietoja ei löytynyt. Ota yhteyttä puhelimitse.');
+        return;
+      }
+      const data = await response.json();
+      if (data.success && data.booking) {
+        setBookingDetails(data.booking);
+      } else {
+        setError('Varauksen tietoja ei löytynyt');
+      }
+    } catch (error: any) {
+      if (error.name === 'AbortError') {
+        setError('Pyyntö aikakatkaistiin. Yritä uudelleen.');
+      } else {
+        setError('Virhe varauksen hakemisessa. Ota yhteyttä puhelimitse.');
+      }
+    } finally {
+      setLoading(false);
+    }
+  }, [session_id, confirmationCode]);
 
   const getBookingDetails = useCallback(async () => {
     try {
@@ -257,10 +287,8 @@ export default function BookingConfirmation() {
 
                   {/* Action Buttons */}
                   <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                    <Link href="/">
-                      <a className="flex-1 inline-flex items-center justify-center px-6 py-3 bg-purple-500 hover:bg-purple-600 text-white font-semibold rounded-lg transition-colors">
+                    <Link href="/" className="flex-1 inline-flex items-center justify-center px-6 py-3 bg-purple-500 hover:bg-purple-600 text-white font-semibold rounded-lg transition-colors">
                         Palaa etusivulle
-                      </a>
                     </Link>
                     <button
                       onClick={() => window.print()}

@@ -44,7 +44,7 @@ export default function ServicesGrid({ services }: { services: Service[] }) {
   const displayServices = services.length > 0 ? services : mockServices;
 
   return (
-    <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
       {displayServices.map((service, index) => (
         <div
           key={service.id}
@@ -91,7 +91,7 @@ export default function ServicesGrid({ services }: { services: Service[] }) {
               </div>
 
               <Link
-                href={`/services/${service.id}`}
+                href="/booking"
                 className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-medium px-6 py-3 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
               >
                 Varaa nyt
