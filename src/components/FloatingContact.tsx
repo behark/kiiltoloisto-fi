@@ -7,9 +7,9 @@ export default function FloatingContact() {
 
   return (
     <div className="fixed bottom-6 right-6 z-40">
-      {/* Expanded Contact Menu */}
-      <div className={`transition-all duration-300 transform ${isExpanded ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0 pointer-events-none'}`}>
-        <div className="bg-white rounded-2xl shadow-2xl p-4 mb-4 border border-gold-200 min-w-[280px]">
+      {/* Expanded Contact Menu - absolutely positioned so it doesn't expand the wrapper's click area */}
+      <div className={`absolute bottom-full right-0 mb-4 transition-all duration-300 transform ${isExpanded ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0 pointer-events-none scale-95'}`}>
+        <div className="bg-white rounded-2xl shadow-2xl p-4 border border-gold-200 min-w-[280px]">
           <div className="text-center mb-4">
             <h3 className="font-bold text-navy-900 text-lg">Ota yhteyttä</h3>
             <p className="text-slate-600 text-sm">Kiilto & Loisto</p>
