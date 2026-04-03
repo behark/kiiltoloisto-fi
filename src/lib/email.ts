@@ -1,31 +1,34 @@
-import sgMail from '@sendgrid/mail';
+import nodemailer from 'nodemailer';
 import { logger } from './logger';
 
-// Initialize SendGrid if API key is available
-if (process.env.SENDGRID_API_KEY) {
-  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+function createTransporter() {
+  const host = process.env.SMTP_HOST;
+  const port = parseInt(process.env.SMTP_PORT || '587', 10);
+  const user = process.env.SMTP_USER;
+  const pass = process.env.SMTP_PASSWORD;
+
+  if (!host || !user || !pass) {
+    return null;
+  }
+
+  return nodemailer.createTransport({
+    host,
+    port,
+    secure: port === 465,
+    auth: { user, pass },
+  });
 }
 
 function validateEmailConfig(): { isValid: boolean; error?: string } {
-  const apiKey = process.env.SENDGRID_API_KEY;
-  const senderEmail = process.env.SENDER_EMAIL;
-
-  if (!apiKey) {
-    return { isValid: false, error: 'SENDGRID_API_KEY not configured' };
+  if (!process.env.SMTP_HOST) {
+    return { isValid: false, error: 'SMTP_HOST not configured' };
   }
-
-  if (!apiKey.startsWith('SG.')) {
-    return { isValid: false, error: 'SENDGRID_API_KEY appears to be invalid' };
+  if (!process.env.SMTP_USER) {
+    return { isValid: false, error: 'SMTP_USER not configured' };
   }
-
-  if (!senderEmail) {
-    return { isValid: false, error: 'SENDER_EMAIL not configured' };
+  if (!process.env.SMTP_PASSWORD) {
+    return { isValid: false, error: 'SMTP_PASSWORD not configured' };
   }
-
-  if (!senderEmail.includes('@')) {
-    return { isValid: false, error: 'SENDER_EMAIL appears to be invalid' };
-  }
-
   return { isValid: true };
 }
 
@@ -35,7 +38,6 @@ export async function sendEmail(
   htmlContent: string,
   textContent: string
 ): Promise<{ success: boolean; error?: string; messageId?: string }> {
-  // Enhanced logging for debugging
   console.log('📧 Email Debug - Starting send process...');
   console.log('📬 Target email:', to);
   console.log('📝 Subject:', subject);
@@ -46,52 +48,48 @@ export async function sendEmail(
     const errorMsg = `Email service not configured: ${validation.error}`;
     console.log('❌ Email Config Error:', errorMsg);
     logger.warn(errorMsg);
-
-    // Return gracefully instead of throwing - allows site to work without email
     return { success: false, error: validation.error };
   }
 
   console.log('✅ Email config validation passed');
 
+  const transporter = createTransporter();
+  if (!transporter) {
+    return { success: false, error: 'Failed to create email transporter' };
+  }
+
   try {
-    const message = {
+    const fromEmail = process.env.SMTP_FROM || process.env.SMTP_USER;
+    const info = await transporter.sendMail({
+      from: `"Autopesu Kiilto & Loisto" <${fromEmail}>`,
       to,
-      from: {
-        email: process.env.SENDER_EMAIL as string,
-        name: 'Autopesu Kiilto & Loisto'
-      },
       subject,
       text: textContent,
       html: htmlContent,
-    };
-
-    const response = await sgMail.send(message);
+    });
 
     logger.info('Email sent successfully', {
       to,
       subject,
-      messageId: response[0].headers['x-message-id'],
+      messageId: info.messageId,
       timestamp: new Date().toISOString()
     });
 
-    console.log('✅ Email sent successfully:', response[0].headers['x-message-id']);
+    console.log('✅ Email sent successfully:', info.messageId);
 
     return {
       success: true,
-      messageId: response[0].headers['x-message-id'] as string
+      messageId: info.messageId
     };
   } catch (error: any) {
     const errorMsg = `Failed to send email to ${to}`;
     logger.error(errorMsg, {
       error: error.message,
-      response: error.response?.body
+      code: error.code,
+      response: error.response
     });
 
     console.log('❌ Email send failed:', error.message);
-
-    if (process.env.NODE_ENV === 'production') {
-      throw new Error('Failed to send email notification');
-    }
 
     return { success: false, error: error.message };
   }
