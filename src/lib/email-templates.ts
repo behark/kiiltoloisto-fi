@@ -190,6 +190,80 @@ ${siteConfig.address.street}, ${siteConfig.address.postalCode} ${siteConfig.addr
   };
 }
 
+export function adminBookingNotificationTemplate(
+  booking: Booking & { service: Service }
+): EmailTemplate {
+  const formattedDate = format(new Date(booking.date), 'EEEE d.M.yyyy', { locale: fi });
+  const price = (booking.priceCents / 100).toFixed(2);
+
+  const html = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <style>
+          body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; }
+          .header { background: #1e3a5f; color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+          .content { background: white; padding: 30px; border: 1px solid #e0e0e0; border-radius: 0 0 10px 10px; }
+          .booking-details { background: #f0f7ff; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #1e3a5f; }
+          .customer-info { background: #fff8e1; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #ffc107; }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <h1>Uusi varaus!</h1>
+          <p>${siteConfig.name}</p>
+        </div>
+        <div class="content">
+          <h2>Uusi varaus vastaanotettu</h2>
+
+          <div class="booking-details">
+            <h3>Varauksen tiedot:</h3>
+            <p><strong>Vahvistuskoodi:</strong> ${booking.confirmationCode}</p>
+            <p><strong>Palvelu:</strong> ${booking.service.titleFi}</p>
+            <p><strong>Päivämäärä:</strong> ${formattedDate}</p>
+            <p><strong>Aika:</strong> ${booking.startTime} - ${booking.endTime}</p>
+            <p><strong>Ajoneuvon tyyppi:</strong> ${booking.vehicleType}</p>
+            ${booking.licensePlate ? `<p><strong>Rekisterinumero:</strong> ${booking.licensePlate}</p>` : ''}
+            <p><strong>Hinta:</strong> ${price} €</p>
+            ${booking.notes ? `<p><strong>Lisätiedot:</strong> ${booking.notes}</p>` : ''}
+          </div>
+
+          <div class="customer-info">
+            <h3>Asiakkaan tiedot:</h3>
+            <p><strong>Nimi:</strong> ${booking.customerName}</p>
+            <p><strong>Sähköposti:</strong> ${booking.customerEmail}</p>
+            <p><strong>Puhelin:</strong> ${booking.customerPhone}</p>
+          </div>
+        </div>
+      </body>
+    </html>
+  `;
+
+  const text = `
+UUSI VARAUS - ${siteConfig.name}
+
+Vahvistuskoodi: ${booking.confirmationCode}
+Palvelu: ${booking.service.titleFi}
+Päivämäärä: ${formattedDate}
+Aika: ${booking.startTime} - ${booking.endTime}
+Ajoneuvon tyyppi: ${booking.vehicleType}
+${booking.licensePlate ? `Rekisterinumero: ${booking.licensePlate}` : ''}
+Hinta: ${price} €
+${booking.notes ? `Lisätiedot: ${booking.notes}` : ''}
+
+ASIAKKAAN TIEDOT:
+Nimi: ${booking.customerName}
+Sähköposti: ${booking.customerEmail}
+Puhelin: ${booking.customerPhone}
+  `;
+
+  return {
+    subject: `Uusi varaus: ${booking.service.titleFi} - ${formattedDate} klo ${booking.startTime}`,
+    html,
+    text,
+  };
+}
+
 export function bookingReminderTemplate(
   booking: Booking & { service: Service }
 ): EmailTemplate {

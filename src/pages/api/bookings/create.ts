@@ -4,7 +4,7 @@ import { BookingStatus, PaymentStatus } from '@prisma/client';
 import { format, addMinutes } from 'date-fns';
 import { sendWhatsApp, generateBookingConfirmationWhatsApp, generateAdminNotificationWhatsApp } from '../../../lib/whatsapp';
 import { sendSMS, generateBookingConfirmationSMS } from '../../../lib/sms';
-import { sendBookingConfirmationEmail } from '../../../lib/email';
+import { sendBookingConfirmationEmail, sendBookingNotificationToOwner } from '../../../lib/email';
 import { getOrCreateCustomer, awardLoyaltyPoints } from '../../../lib/loyalty';
 import { calculateTotalPrice } from '../../../lib/pricing';
 
@@ -195,7 +195,7 @@ export default async function handler(
       });
     }
 
-    // Send email confirmation
+    // Send email confirmation (must await on Vercel — background work is killed after response)
     const emailLoyaltyInfo = {
       tier: loyaltyStatus.tier,
       points: Math.floor(pricingDetails.finalPrice / 100),
@@ -204,11 +204,28 @@ export default async function handler(
       savings: pricingDetails.savings > 0 ? `${(pricingDetails.savings / 100).toFixed(0)}€` : undefined,
     };
 
-    sendBookingConfirmationEmail(customerEmail, booking, emailLoyaltyInfo).catch(error => {
-      console.log('Email notification failed (non-critical):', error);
-    });
+    try {
+      const [customerEmailResult, ownerEmailResult] = await Promise.all([
+        sendBookingConfirmationEmail(customerEmail, booking, emailLoyaltyInfo),
+        sendBookingNotificationToOwner(booking),
+      ]);
 
-    // Send admin notification if admin phone is configured
+      if (!customerEmailResult.success) {
+        console.warn('Booking confirmation email not sent:', customerEmailResult.error);
+      } else {
+        console.log('✅ Customer confirmation email sent');
+      }
+
+      if (!ownerEmailResult.success) {
+        console.warn('Admin email notification not sent:', ownerEmailResult.error);
+      } else {
+        console.log('✅ Admin email notification sent');
+      }
+    } catch (emailError) {
+      console.error('Email sending error (non-critical):', emailError);
+    }
+
+    // Send admin WhatsApp notification if admin phone is configured
     const adminPhone = process.env.ADMIN_PHONE;
     if (adminPhone) {
       const adminMessage = generateAdminNotificationWhatsApp(
